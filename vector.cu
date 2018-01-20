@@ -4,9 +4,13 @@
 #include <cuda.h>
 #include <vector>
 #include <tiny_helper_cuda.h>
+#include <boost/python.hpp>
+#include <boost/python/numeric.hpp>
 
 
-namespace bn = boost::numpy;
+namespace bn = boost::python::numeric;
+
+
 
 __global__ void
 vectormult_kernel( float *A, float k, int numElements)
@@ -40,7 +44,7 @@ public:
         checkCudaErrors(cudaMalloc((void **)&dev_vector, SIZE*sizeof(float)));
     };
     
-    std::vector<float> get_result()
+    bn::ndarray get_result()
     {
         checkCudaErrors(cudaMemcpy(host_vector.data(), dev_vector, SIZE*sizeof(float), cudaMemcpyDeviceToHost));
         return host_vector;
@@ -74,7 +78,6 @@ public:
 
 
 
-#include <boost/python.hpp>
 
 BOOST_PYTHON_MODULE(vector_wrapped)
 {

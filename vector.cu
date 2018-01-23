@@ -1,93 +1,27 @@
-#define SIZE 128
-
-
-#include <cuda.h>
-#include <vector>
+#include <cuda_runtime_api.h>
+#include <device_launch_parameters.h>
 #include <tiny_helper_cuda.h>
-#include <boost/python.hpp>
-#include <boost/python/numeric.hpp>
-
-
-namespace bn = boost::python::numeric;
-
-
 
 __global__ void
-vectormult_kernel( float *A, float k, int numElements)
+vectormult_kernel(float *A, float k, int numElements)
 {
-    int i = blockDim.x * blockIdx.x + threadIdx.x;
+	int i = blockDim.x * blockIdx.x + threadIdx.x;
 
-    if (i < numElements)
-    {
-        A[i] *=  k;
-    }
-};
-
-void vectormult(float * A, float k)
-{
-	vectormult_kernel <<<1, SIZE >>>(A, k, SIZE);
-};
-
-
-class Vector
-{
-private:
-	float * dev_vector;
-	std::vector<float> host_vector;
-
-public:
-	//Vector(const Vector&) = delete;
-	//Vector& operator= (const Vector&) = delete;
-    Vector(int x)
-    {
-        host_vector.reserve(SIZE);
-        checkCudaErrors(cudaMalloc((void **)&dev_vector, SIZE*sizeof(float)));
-    };
-    
-    bn::ndarray get_result()
-    {
-        checkCudaErrors(cudaMemcpy(host_vector.data(), dev_vector, SIZE*sizeof(float), cudaMemcpyDeviceToHost));
-        return host_vector;
-    };
-    
-    void multiply_by(float k)
-    {
-		vectormult(dev_vector, k);
-		//vectormult <<<1, SIZE>>>(dev_vector, x, SIZE);
-	};
-    
-    
-    
-    void fill(std::vector<float> data)
-    {
-        host_vector = data;
-		
-        checkCudaErrors(cudaMemcpy(dev_vector, host_vector.data(), SIZE*sizeof(float), cudaMemcpyHostToDevice));
-    };
-    
-    
-    
-	~Vector()
+	if (i < numElements)
 	{
-		checkCudaErrors(cudaFree(dev_vector));
-	};
-
-    
-};
+		A[i] *= k;
+	}
+}
 
 
 
 
-
-BOOST_PYTHON_MODULE(vector_wrapped)
+extern "C"
+void vectormult(float* dev_vector, float k, int size)
 {
-	namespace python = boost::python;
-
-	bn::initialize();
-
-	python::class_<Vector>("Vector", python::init<int>())
-		.def("fill", &Vector::fill)
-		.def("get_result", &Vector::get_result)
-		.def("multiply_by", &Vector::multiply_by)
-		;
+	const int n_threads = 128;
+	const int n_blocks = (size + n_threads - 1) / n_threads;
+	vectormult_kernel << <n_blocks, n_threads >> >(dev_vector, k, size);
+	checkCudaErrors(cudaDeviceSynchronize());
+	getLastCudaError("vectormult_kernel");
 }

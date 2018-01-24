@@ -20,7 +20,7 @@ class Vector
 protected:
 	float * dev_vector = nullptr;
 	np::ndarray host_vector;
-	int size;
+	int size = 0;
 
 public:
 

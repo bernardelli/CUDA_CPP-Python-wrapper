@@ -47,7 +47,7 @@ MESSAGE(STATUS "CUDA flags: ${CUDA_NVCC_FLAGS}")
 
 
 cuda_add_library(vectorlib SHARED
-					 vector.cu vector.cpp inc/vector.h)
+					 vector.cu vector.cpp inc/vector.h inc/vector.cuh)
 
 
 CUDA_ADD_CUBLAS_TO_TARGET( vectorlib )

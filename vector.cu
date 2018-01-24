@@ -1,6 +1,7 @@
 #include <cuda_runtime_api.h>
 #include <device_launch_parameters.h>
 #include <tiny_helper_cuda.h>
+#include <vector.cuh>
 
 __global__ void
 vectormult_kernel(float *A, float k, int numElements)
@@ -25,9 +26,6 @@ vectoradd_kernel(const float* A, const float* B,  float* C, int numElements)
 }
 
 
-
-
-extern "C"
 void vectormult(float* dev_vector, float k, int size)
 {
 	const int n_threads = 128;
@@ -37,7 +35,6 @@ void vectormult(float* dev_vector, float k, int size)
 	getLastCudaError("vectormult_kernel");
 }
 
-extern "C"
 void vectoradd(const float* A, const float* B,  float* C, int size)
 {
 	const int n_threads = 128;

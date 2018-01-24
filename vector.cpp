@@ -1,16 +1,10 @@
 
 #include <vector.h>
 #include <string>
-extern "C"
-void vectormult(float* dev_vector, float k, int size);
-
-extern "C"
-void vectoradd(const float* A, const float* B,  float* C, int size);
+#include <vector.cuh>
 
 namespace bp = boost::python;
 namespace np = boost::python::numpy;
-
-
 
 
 
@@ -18,11 +12,6 @@ Vector::Vector(np::ndarray const & array)
 	: host_vector(array.astype(np::dtype::get_builtin<float>()))
 {
 
-	
-	//Py_intptr_t shape[1] = { SIZE };
-	//np::ndarray result = np::zeros(1, shape, np::dtype::get_builtin<float>());
-
-	
 	size = host_vector.shape(0);
 
 	std::cout << size << std::endl;
@@ -77,7 +66,6 @@ Vector& operator+ (Vector const& lhs, Vector const& rhs) {
 Vector& Vector::operator+= (Vector const& rhs)
 {
 	assert(size == rhs.size);
-	//apply changes to *this
 
 	vectoradd(rhs.dev_vector, dev_vector, dev_vector, size);
 	return *this;
@@ -85,7 +73,7 @@ Vector& Vector::operator+= (Vector const& rhs)
 
 Vector& Vector::operator=(Vector const& rhs)
 {
-	if (size != rhs.size)
+	if (size <= rhs.size)
 	{
 		size = rhs.size;
 		checkCudaErrors(cudaFree(dev_vector));

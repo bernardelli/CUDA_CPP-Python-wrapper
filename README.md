@@ -19,6 +19,6 @@ CMake is a great tool when you want a project to run on different computers with
 <h3>To Do list</h3>
 
 - [x] make it work on Visual Studio
-- [ ] clean out the code and write useful comments
+- [ ] clean up the code and write useful comments
 - [ ] make it work on Linux/gcc
 - [ ] write some cool examples here

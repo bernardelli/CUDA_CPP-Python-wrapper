@@ -52,8 +52,6 @@ cuda_add_library(vectorlib SHARED
 
 CUDA_ADD_CUBLAS_TO_TARGET( vectorlib )
 
-
-
 link_directories(${Boost_LIBRARY_DIRS} )
 
 

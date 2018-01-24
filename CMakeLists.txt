@@ -1,6 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.10)
 
 
+
 project (TestWrapper VERSION 0.99 DESCRIPTION "C++ CUDA Wrapper Test")
 
 set(CUDA_SEPARABLE_COMPILATION ON)
@@ -20,11 +21,23 @@ add_definitions(-DBOOST_PYTHON_STATIC_LIB -DBOOST_NUMPY_STATIC_LIB)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CUDA_PROPAGATE_HOST_FLAGS ON)
 
+
+if (MSVC)
+set (XCOMPILER_OPT_DEBUG  "/MDd";)
+set (XCOMPILER_OPT_RELEASE  "/MD";)
+
+set(XCOMPILER_OPT_
+                        "$<$<CONFIG:Debug>:${XCOMPILER_OPT_DEBUG}>"
+                        "$<$<CONFIG:Release>:${XCOMPILER_OPT_RELEASE}>")
+
+
+endif ()
 
 CUDA_SELECT_NVCC_ARCH_FLAGS(ARCH_FLAGS 5.0)
 LIST(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
-LIST(APPEND CUDA_NVCC_FLAGS   -lcudart; -lcudadevrt;--cudart static;  -rdc=true; -Xcompiler "/MDd"; ) 
+LIST(APPEND CUDA_NVCC_FLAGS   -lcuda;  -lcublas; -lcudart; -lcudadevrt;--cudart static;  -rdc=true; -Xcompiler ${XCOMPILER_OPT_} ) 
 
 include_directories( ${PYTHON_INCLUDE_DIRS}  ${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/inc ${CUDA_INCLUDE_DIRS})
 

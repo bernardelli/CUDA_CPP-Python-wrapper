@@ -21,11 +21,11 @@ private:
 
 public:
 
-    Vector(const np::ndarray& array);
+    Vector(np::ndarray const & array);
     
-	int get_result();
+	np::ndarray get_result();
     
-    int multiply_by(float k);
+    void multiply_by(float k);
      
     
 	~Vector();

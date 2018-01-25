@@ -25,9 +25,11 @@ protected:
 public:
 
     Vector(np::ndarray const & array);
-	Vector(Vector const& rhs);
-	Vector(int size);
-    
+	Vector(Vector const & rhs);
+	Vector(int size, float *dev_array = nullptr);
+
+
+
 	np::ndarray get_result();
     
     void multiply_by(float k);
@@ -38,9 +40,11 @@ public:
 	//assignment  operator
 	Vector& operator=(Vector const& );
 
-	friend Vector& operator+ (Vector const& lhs, Vector const& rhs);
+	friend Vector operator+ (Vector const& lhs, Vector const& rhs);
 
 	friend std::ostream & operator<<(std::ostream & lhs, Vector  rhs); //Str
+
+	std::string repr();
 
 	~Vector();
 

@@ -7,12 +7,12 @@ It is a good idea to test a larger CUDA/C++ project with all the swiftness and c
 
 <h3>Why CMake?</h3>
 
-CMake is a great tool when you want a project to run on different computers with different OS or library paths, but sometimes writing the CMake configuration file can be a pain in the ass. I ~~kinda~~ managed to make it work, so enjoy  :wink:
+CMake is a great tool when you want a project to run on different computers with different OS or library paths, but sometimes writing the CMake configuration file can be a pain in the ass. I managed to make it work, so enjoy  :wink:
 
 <h3>Requirements:</h3>
 
 * CMake
-* Boost
+* pybind11
 * CUDA
 * Python
 

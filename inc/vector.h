@@ -5,13 +5,15 @@
 #include <device_launch_parameters.h>
 #include <tiny_helper_cuda.h>
 #include <cassert>
-#include <boost/python.hpp>
-#include <boost/python/numpy.hpp>
 #include <iostream>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+#include <vector>
+#include<iostream>
+#include <pybind11/stl.h>
+#include <pybind11/operators.h>
 
-
-namespace bp = boost::python;
-namespace np = boost::python::numpy;
+namespace py = pybind11;
 
 
 
@@ -19,18 +21,18 @@ class Vector
 {
 protected:
 	float * dev_vector = nullptr;
-	np::ndarray host_vector;
 	int size = 0;
+	std::vector<float> host_vector;
 
 public:
 
-    Vector(np::ndarray const & array);
+    Vector(std::vector<float> const & array);
 	Vector(Vector const & rhs);
 	Vector(int size, float *dev_array = nullptr);
 
 
 
-	np::ndarray get_result();
+	std::vector<float> get_result();
     
     void multiply_by(float k);
     
@@ -38,11 +40,11 @@ public:
 	Vector& operator+= (Vector const& rhs);
 
 	//assignment  operator
-	Vector& operator=(Vector const& );
+	//Vector& operator=(Vector const& );
 
-	friend Vector operator+ (Vector const& lhs, Vector const& rhs);
+	friend Vector* operator+ (Vector const& lhs, Vector const& rhs);
 
-	friend std::ostream & operator<<(std::ostream & lhs, Vector  rhs); //Str
+	std::string  str(); //Str
 
 	std::string repr();
 
@@ -52,9 +54,27 @@ public:
 };
 
 
+PYBIND11_MODULE(vectorlib, m)
+{
+
+
+	py::class_<Vector>(m, "Vector")
+		.def(py::init<std::vector<float> const &>())
+		.def(py::init<int>())
+		.def(py::init<Vector const&>())
+		.def("get_result", &Vector::get_result)
+		.def("multiply_by", &Vector::multiply_by)
+		.def(py::self += py::self)
+		.def(py::self + py::self)
+		.def("__str__", &Vector::str)
+		.def("__repr__", &Vector::repr);
+
+}
 
 
 
 
+//return_value_policy<manage_new_object>()
+//with_custodian_and_ward<...>()
 
 

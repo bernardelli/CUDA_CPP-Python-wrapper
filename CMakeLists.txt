@@ -43,7 +43,7 @@ set(NVCC_GEN_OPT
 	"$<$<CONFIG:Release>:${NVCC_RELEASE}>")
 
 #Set here your target architecture
-CUDA_SELECT_NVCC_ARCH_FLAGS(ARCH_FLAGS 5.0)
+CUDA_SELECT_NVCC_ARCH_FLAGS(ARCH_FLAGS Auto)
 
 LIST(APPEND CUDA_NVCC_FLAGS ${ARCH_FLAGS})
 LIST(APPEND CUDA_NVCC_FLAGS ${NVCC_GEN_OPT})
@@ -61,7 +61,6 @@ cuda_add_library(vectorlib SHARED
 
 
 
-link_directories(${Boost_LIBRARY_DIRS} )
 
 #Add CUBLAS because NVCC seems to auto-convert canonnical kernles (e.g. adding two vectors) to the CUBLAS implementation
 #TODO investigate this behavior
